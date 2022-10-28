@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: CryptoCurrencyWatcher
+  contact: 
+    name: ArtyomBorisov
+
+paths:
+  /coin:
+    get:
+      tags:
+        - "Криптовалюта"
+      summary: "Получить список всех криптовалют"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coin'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+          
+  
+  /coin/{symbol}:
+    get:
+      tags:
+        - "Криптовалюта"
+      summary: "Получить актуальную цену для криптовалюты"
+      parameters:
+        - in: path
+          name: symbol
+          description: "Код криптовалюты"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coin'
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+          
+  /notify:
+    post:
+      tags:
+        - "Криптовалюта"
+      summary: "Создать уведомление"
+      requestBody:
+        $ref: '#/components/requestBodies/Notification'
+      responses:
+        '201':
+          description: "Уведомление создано"
+        '400':
+          $ref: '#/components/responses/Bad_Request'
+        '500':
+          $ref: '#/components/responses/Internal_Server_Error'
+components:
+  requestBodies:
+    Notification:
+      description: Тело для создания уведомления
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Notification'
+
+  responses:
+    Bad_Request:
+      description: Запрос некорректен. Сервер не может обработать запрос
+      content:
+        application/json:
+          schema:
+            example: 
+              logref: "error"
+              message: "Запрос содержит некорретные данные. Измените запрос и отправьте его ещё раз"
+              
+    Internal_Server_Error:
+      description: Внутренняя ошибка сервера. Сервер не смог корректно обработать запрос
+      content:
+        applicaion/json:
+          schema:
+            example:
+              logref: "error"
+              message: "Сервер не смог корректно обработать запрос. Пожалуйста обратитесь к администратору"
+              
+  schemas:
+    Coin:
+      type: object
+      description: Криптовалюта
+      properties: 
+        name:
+          type: string
+          description: "Наименование"
+        price_usd:
+          type: number
+          description: "Цена"
+    Notification:
+      type: object
+      description: Уведомление
+      properties: 
+        username:
+          type: string
+          description: "Имя пользователя"
+        symbol:
+          type: string
+          description: "Код валюты"

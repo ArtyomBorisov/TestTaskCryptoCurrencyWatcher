@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/crypto-currency-watcher
+    username: postgres
+    password: postgres
+
+coin_url : https://api.coinlore.net/api/ticker/?id=
+
+data_file: src/main/resources/data.txt
